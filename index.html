@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Facturate — Modelo ER v1.0</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 32px;
+            background: #f8fafc;
+            color: #172033;
+            max-width: 1050px
+        }
+
+        h1 {
+            margin-bottom: 6px
+        }
+
+        p {
+            color: #475569;
+            line-height: 1.5
+        }
+
+        .meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 20px 0
+        }
+
+        .pill {
+            background: #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 18px;
+            font-size: 13px
+        }
+
+        section {
+            background: #fff;
+            border: 1px solid #dbe2ea;
+            border-radius: 12px;
+            padding: 18px;
+            margin: 16px 0
+        }
+
+        a {
+            color: #1d4ed8;
+            text-decoration: none
+        }
+
+        a:hover {
+            text-decoration: underline
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px
+        }
+
+        .item {
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            padding: 12px
+        }
+
+        .item h3 {
+            font-size: 15px;
+            margin: 0 0 8px
+        }
+
+        .links {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 13px
+        }
+
+        .muted {
+            font-size: 12px;
+            color: #64748b
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Facturate — Modelo entidad-relación</h1>
+    <p>Primera versión del modelo ER, derivada de <b>BaseDeDatos_Facturate.xlsx</b>. Notación Crow’s Foot. El modelo
+        conserva la estructura del archivo fuente y no incorpora correcciones posteriores que no estén allí reflejadas.
+    </p>
+    <div class="meta"><span class="pill">10 módulos</span><span class="pill">61 entidades</span><span class="pill">310
+            campos</span><span class="pill">90 relaciones representadas</span></div>
+    <section>
+        <h2>Vistas generales</h2>
+        <div class="links"><a href="diagramas_svg/00_Resumen_Modulos.svg">Mapa de módulos (SVG)</a><a
+                href="diagramas_svg/01_Modelo_Completo.svg">Modelo ER completo (SVG)</a><a
+                href="vistas_png/01_Modelo_Completo.png">Modelo ER completo (PNG)</a><a href="LEEME.txt">Notas y
+                convenciones</a><a href="relaciones_fk.csv">Registro de relaciones FK (CSV)</a></div>
+    </section>
+    <section>
+        <h2>Diagramas detallados por módulo</h2>
+        <div class="grid">
+            <div class="item">
+                <h3>A. Usuarios y negocio</h3>
+                <div class="links"><a href="diagramas_svg/01_A_USUARIOS_Y_NEGOCIO.svg">Abrir SVG</a><a
+                        href="vistas_png/01_A_USUARIOS_Y_NEGOCIO.png">Abrir PNG</a></div>
+            </div>
+            <div class="item">
+                <h3>B. Catálogo e inventario</h3>
+                <div class="links"><a href="diagramas_svg/02_B_CAT_LOGO_E_INVENTARIO.svg">Abrir SVG</a><a
+                        href="vistas_png/02_B_CAT_LOGO_E_INVENTARIO.png">Abrir PNG</a></div>
+            </div>
+            <div class="item">
+                <h3>C. Compras y gastos</h3>
+                <div class="links"><a href="diagramas_svg/03_C_COMPRAS_Y_GASTOS.svg">Abrir SVG</a><a
+                        href="vistas_png/03_C_COMPRAS_Y_GASTOS.png">Abrir PNG</a></div>
+            </div>
+            <div class="item">
+                <h3>D. Ventas</h3>
+                <div class="links"><a href="diagramas_svg/04_D_VENTAS.svg">Abrir SVG</a><a
+                        href="vistas_png/04_D_VENTAS.png">Abrir PNG</a></div>
+            </div>
+            <div class="item">
+                <h3>E. Facturación</h3>
+                <div class="links"><a href="diagramas_svg/05_E_FACTURACI_N.svg">Abrir SVG</a><a
+                        href="vistas_png/05_E_FACTURACI_N.png">Abrir PNG</a></div>
+            </div>
+            <div class="item">
+                <h3>F. Configuración</h3>
+                <div class="links"><a href="diagramas_svg/06_F_CONFIGURACI_N.svg">Abrir SVG</a><a
+                        href="vistas_png/06_F_CONFIGURACI_N.png">Abrir PNG</a></div>
+            </div>
+            <div class="item">
+                <h3>G. Caja</h3>
+                <div class="links"><a href="diagramas_svg/07_G_CAJA.svg">Abrir SVG</a><a
+                        href="vistas_png/07_G_CAJA.png">Abrir PNG</a></div>
+            </div>
+            <div class="item">
+                <h3>H. Devoluciones</h3>
+                <div class="links"><a href="diagramas_svg/08_H_DEVOLUCIONES.svg">Abrir SVG</a><a
+                        href="vistas_png/08_H_DEVOLUCIONES.png">Abrir PNG</a></div>
+            </div>
+            <div class="item">
+                <h3>I. Offline</h3>
+                <div class="links"><a href="diagramas_svg/09_I_OFFLINE.svg">Abrir SVG</a><a
+                        href="vistas_png/09_I_OFFLINE.png">Abrir PNG</a></div>
+            </div>
+            <div class="item">
+                <h3>J. Portal / soporte</h3>
+                <div class="links"><a href="diagramas_svg/10_J_PORTAL_SOPORTE.svg">Abrir SVG</a><a
+                        href="vistas_png/10_J_PORTAL_SOPORTE.png">Abrir PNG</a></div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <h2>Fuentes editables</h2>
+        <p>Los archivos <code>.dot</code> están en <code>fuentes_dot/</code>. Se pueden modificar como texto y volver a
+            exportar a SVG con Graphviz. La notación y el criterio de cardinalidad están explicados en
+            <code>LEEME.txt</code>.</p>
+    </section>
+</body>
+
+</html>

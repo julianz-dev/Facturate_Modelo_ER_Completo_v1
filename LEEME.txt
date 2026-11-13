@@ -1,0 +1,43 @@
+MODELO ER DE FACTURATE — VERSIÓN 1.0
+====================================
+
+Fuente utilizada: BaseDeDatos_Facturate(5).xlsx (archivo aportado por el usuario).
+
+Contenido verificado:
+- 10 módulos funcionales.
+- 61 entidades/tablas.
+- 310 campos documentados.
+- 90 relaciones FK representadas.
+
+Archivos:
+- diagramas_svg/00_Resumen_Modulos.svg: mapa de navegación entre módulos (no es el ER detallado).
+- diagramas_svg/01_Modelo_Completo.svg: vista completa con las 61 entidades y sus campos.
+- diagramas_svg/02_A_Usuarios_y_Negocio.svg ... 11_J_PORTAL_SOPORTE.svg: diagramas detallados por módulo.
+- fuentes_dot/: fuentes Graphviz editables de cada diagrama.
+- vistas_png/: vistas PNG para consulta rápida.
+
+NOTACIÓN CROW'S FOOT:
+- Una barra (|) en el extremo del padre representa uno.
+- Círculo + pata de cuervo en el extremo hijo representa cero o muchos.
+- Círculo + barra en el extremo del padre indica que la FK es opcional (NULL).
+- En una FK UNIQUE, el extremo hijo se representa como cero o uno.
+- Las etiquetas de las relaciones muestran la(s) columna(s) FK.
+- Las relaciones con la etiqueta 'compuesta' agrupan varias columnas en una FK compuesta, según la definición del Excel.
+
+CRITERIO DE REPRESENTACIÓN:
+- El diagrama refleja las tablas, campos, tipos de datos y marcadores PK/FK/UNIQUE/NULL documentados en el Excel fuente.
+- No se incorporan recomendaciones de auditorías previas que todavía no aparecen en el archivo.
+- Las relaciones simples se asignan por correspondencia del nombre de la FK con la PK referenciada.
+- Las FK compuestas se muestran con las columnas indicadas en la estructura vigente.
+- Las cardinalidades se derivan de la nulabilidad y de los marcadores UNIQUE documentados.
+
+LÍMITES Y PUNTOS A VALIDAR EN LA SIGUIENTE ITERACIÓN:
+1. En algunas tablas, el Excel marca una FK como compuesta pero no documenta en una columna separada la lista completa de columnas destino. La relación se representa según el diseño previamente documentado en la hoja.
+2. Algunas relaciones entre módulos todavía requieren confirmar claves candidatas (por ejemplo, combinaciones negocio_id + id) para poder implementarse como FK compuestas reales en SQL Server.
+3. En tablas con FK nullable, la cardinalidad opcional se muestra como 0..1 desde el hijo hacia el padre.
+4. El diagrama es un modelo conceptual/lógico inicial. No constituye un script DDL validado ni resuelve por sí mismo reglas de negocio que requieren transacciones o triggers.
+
+CÓMO ABRIR Y EDITAR:
+- Los SVG se abren en navegador y se pueden ampliar sin pérdida de calidad.
+- Los archivos .dot de fuentes_dot pueden editarse como texto y regenerarse con Graphviz (dot -Tsvg archivo.dot -o archivo.svg).
+- El archivo .dot completo contiene toda la estructura y todas las relaciones documentadas.
