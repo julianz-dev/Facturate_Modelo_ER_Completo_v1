@@ -275,7 +275,7 @@ BEGIN
     SET XACT_ABORT ON;
 
     DECLARE @precio_venta DECIMAL(14,2);
-    DECLARE @nombre_producto NVARCHAR(150);
+    DECLARE @descripcion_producto NVARCHAR(500);
     DECLARE @subtotal DECIMAL(14,2);
 
     SET @venta_id = NULL;
@@ -301,7 +301,19 @@ BEGIN
 
         SELECT
             @precio_venta = precio_venta,
-            @nombre_producto = nombre_producto
+            @descripcion_producto = CONVERT
+            (
+                NVARCHAR(500),
+                CONCAT
+                (
+                    nombre_producto,
+                    CASE
+                        WHEN NULLIF(LTRIM(RTRIM(descripcion)), N'') IS NOT NULL
+                        THEN N' - ' + descripcion
+                        ELSE N''
+                    END
+                )
+            )
         FROM dbo.productos WITH (UPDLOCK, HOLDLOCK)
         WHERE producto_id = @producto_id
           AND activo = 1;
@@ -338,7 +350,7 @@ BEGIN
             @producto_id,
             @cantidad,
             @precio_venta,
-            @nombre_producto,
+            @descripcion_producto,
             @subtotal
         );
 
