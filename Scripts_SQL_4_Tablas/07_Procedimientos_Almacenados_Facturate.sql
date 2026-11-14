@@ -447,7 +447,7 @@ BEGIN
         END;
 
         SELECT @subtotal_detalles = CONVERT(DECIMAL(14,2), SUM(subtotal))
-        FROM dbo.detalles_venta
+        FROM dbo.detalles_venta WITH (UPDLOCK, HOLDLOCK)
         WHERE venta_id = @venta_id;
 
         IF @subtotal_detalles IS NULL
