@@ -221,8 +221,9 @@ Los scripts están numerados para indicar el orden de preparación de la simulac
 | `04_Insert_Ventas_Facturate.sql` | Inserta 400 cabeceras de venta inicialmente en estado `BORRADOR`, asociadas a clientes. |
 | `05_Insert_Detalles_Ventas_Facturate.sql` | Inserta 1.200 detalles asociados a las ventas y productos; calcula importes y actualiza las cabeceras de venta según los detalles y las reglas del script. |
 | `06_Consultas_Facturate.sql` | Contiene consultas de análisis y consultas demostrativas de INSERT y DELETE. |
+| `07_Procedimientos_Almacenados_Facturate.sql` | Crea cinco procedimientos almacenados para consultar productos y ventas, registrar clientes, crear ventas en borrador y confirmar ventas. |
 
-**Orden recomendado:** ejecutar los scripts del 01 al 05 y, posteriormente, ejecutar las consultas del archivo 06. Los scripts de carga incorporan comprobaciones para evitar insertar nuevamente determinados lotes o duplicar registros.
+**Orden recomendado:** ejecutar los scripts del 01 al 05; luego ejecutar el 07 para crear los procedimientos almacenados; finalmente, utilizar el archivo 06 para las consultas de análisis. Los procedimientos también pueden crearse después del script 01, siempre que ya existan las cuatro tablas. Para probar los ejemplos de creación y confirmación de ventas, se recomienda haber cargado previamente los datos. Los scripts de carga incorporan comprobaciones para evitar insertar nuevamente determinados lotes o duplicar registros.
 
 ### 3.4 Datos de prueba previstos
 
@@ -252,16 +253,59 @@ El archivo `06_Consultas_Facturate.sql` reúne consultas para estudiar y analiza
 
 Las consultas de análisis distinguen las ventas confirmadas de las operaciones en borrador o anuladas. En los rankings de clientes se excluye el registro genérico cuando corresponde, para evitar agrupar compradores anónimos como si fueran un solo cliente individual.
 
-> **Alcance CRUD:** el archivo contiene consultas SELECT, un INSERT de prueba y un DELETE controlado de un producto temporal. La actualización de las 400 cabeceras se realiza en el proceso del script de carga de detalles. Estas evidencias corresponden a scripts SQL; no implican por sí solas que exista una interfaz CRUD completa en la aplicación.
+> **Alcance CRUD:** el archivo contiene consultas SELECT, un INSERT de prueba y un DELETE controlado de un producto temporal. La actualización de las 400 cabeceras se realiza en el proceso del script de carga de detalles. El script 07 incorpora procedimientos almacenados para algunas operaciones de consulta, inserción y actualización. Estas evidencias corresponden a scripts SQL; no implican por sí solas que exista una interfaz CRUD completa en la aplicación.
 
-### 3.6 Consideraciones antes de ejecutar
+### 3.6 Procedimientos almacenados
+
+El archivo `07_Procedimientos_Almacenados_Facturate.sql` crea cinco procedimientos almacenados (`Stored Procedures`) mediante `CREATE OR ALTER PROCEDURE`. Su propósito es encapsular operaciones frecuentes, recibir parámetros y centralizar validaciones.
+
+| Procedimiento | Responsabilidad |
+|---|---|
+| `dbo.usp_ConsultarProductos` | Consulta productos y permite filtrar por estado activo y por coincidencia de código o nombre. |
+| `dbo.usp_RegistrarCliente` | Registra un cliente, valida nombre y documento, respeta el cliente genérico único y devuelve el ID generado mediante un parámetro `OUTPUT`. |
+| `dbo.usp_ConsultarVentas` | Consulta ventas con filtros opcionales por estado, rango de fechas y cliente genérico. |
+| `dbo.usp_CrearVentaBorrador` | Crea una venta en estado `BORRADOR` y un primer detalle para un producto y cantidad. Ejecuta la creación dentro de una transacción. |
+| `dbo.usp_ConfirmarVenta` | Confirma una venta en borrador que tenga detalles y valida el método de pago, el valor recibido y la correspondencia entre los subtotales de cabecera y detalle. |
+
+**Ejemplos de ejecución:**
+
+Consultar productos activos:
+
+```sql
+EXEC dbo.usp_ConsultarProductos;
+```
+
+Buscar productos por texto:
+
+```sql
+EXEC dbo.usp_ConsultarProductos
+    @solo_activos = 1,
+    @buscar = N'Lenovo';
+```
+
+Consultar ventas confirmadas de un periodo:
+
+```sql
+EXEC dbo.usp_ConsultarVentas
+    @estado_venta = 'CONFIRMADA',
+    @fecha_desde = '2026-01-01',
+    @fecha_hasta = '2026-12-31',
+    @incluir_generico = 0;
+```
+
+El procedimiento `usp_CrearVentaBorrador` genera una venta con **un solo detalle**; no es un procedimiento de carrito con múltiples productos. `usp_ConfirmarVenta` exige que el subtotal acumulado de los detalles coincida con el subtotal de la cabecera. También exige que el valor recibido coincida exactamente con el total para pagos distintos de efectivo. Para efectivo, permite un valor igual o superior y la columna calculada `cambio` determina la diferencia.
+
+El script utiliza `CREATE OR ALTER PROCEDURE`, disponible en SQL Server 2016 SP1 o posterior. La ejecución del archivo crea o actualiza las definiciones de los procedimientos, pero no ejecuta automáticamente los ejemplos que modifican registros: estos se dejan comentados para evitar cambios accidentales.
+
+### 3.7 Consideraciones antes de ejecutar
 
 1. Utiliza una instancia de Microsoft SQL Server accesible desde SSMS 22.
 2. Revisa el contexto de conexión y confirma que puedes crear o utilizar la base de datos `Facturate`.
 3. Ejecuta los scripts numerados del 01 al 05 en orden.
-4. No ejecutes las cargas repetidamente sobre tablas que ya contienen los datos del lote. Los scripts incluyen validaciones y pueden cancelar la operación para evitar duplicados.
-5. Ejecuta el archivo 06 después de completar la creación y carga de datos.
-6. Antes de realizar pruebas destructivas o reiniciar la simulación, verifica los registros y las dependencias de claves foráneas.
+4. Ejecuta `07_Procedimientos_Almacenados_Facturate.sql` para crear los procedimientos almacenados.
+5. No ejecutes las cargas repetidamente sobre tablas que ya contienen los datos del lote. Los scripts incluyen validaciones y pueden cancelar la operación para evitar duplicados.
+6. Ejecuta el archivo 06 después de completar la creación y carga de datos.
+7. Antes de realizar pruebas destructivas o reiniciar la simulación, verifica los registros y las dependencias de claves foráneas.
 
 **Nota sobre el nombre de la base:** el script 01 crea `Facturate` si todavía no existe y luego trabaja sobre esa base. Por tanto, si ya existe una base con ese nombre en tu instancia, no la reemplaza automáticamente. Verifica que sea el entorno correcto antes de ejecutar los scripts.
 
@@ -281,6 +325,7 @@ Facturate_Base_De_Datos/
 │   ├── 04_Insert_Ventas_Facturate.sql
 │   ├── 05_Insert_Detalles_Ventas_Facturate.sql
 │   ├── 06_Consultas_Facturate.sql
+│   ├── 07_Procedimientos_Almacenados_Facturate.sql
 │   └── modelo_er_facturate_simulador_ventas.svg
 │
 ├── vistas_png/                # Versiones PNG de los diagramas
@@ -296,7 +341,7 @@ Facturate_Base_De_Datos/
 |---|---|
 | `diagramas_svg/` | Diagramas vectoriales del modelo ER, ampliables sin pérdida de calidad. |
 | `fuentes_dot/` | Archivos fuente de Graphviz para editar y regenerar los diagramas. |
-| `Scripts_SQL_4_Tablas/` | Scripts T-SQL para crear el esquema demostrativo, cargar datos, analizar ventas y consultar el diagrama de cuatro tablas. |
+| `Scripts_SQL_4_Tablas/` | Scripts T-SQL para crear el esquema demostrativo, cargar datos, analizar ventas, definir procedimientos almacenados y consultar el diagrama de cuatro tablas. |
 | `vistas_png/` | Versiones rasterizadas de los diagramas para visualización rápida y documentación. |
 | `relaciones_fk.csv` | Inventario tabular de las 90 relaciones representadas en el modelo ER completo. |
 | `LEEME.txt` | Fuente, notación, criterios de representación y puntos pendientes de validación. |
